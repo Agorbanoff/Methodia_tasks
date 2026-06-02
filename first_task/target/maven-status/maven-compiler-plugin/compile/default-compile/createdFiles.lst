@@ -1,0 +1,12 @@
+com\methodia\academy\blur\app\BlurRequest.class
+com\methodia\academy\blur\blur\BlurProcessor.class
+com\methodia\academy\blur\io\ImageReaderService.class
+com\methodia\academy\blur\blur\BlurType.class
+com\methodia\academy\blur\Main.class
+com\methodia\academy\blur\blur\BlurProcessorFactory.class
+com\methodia\academy\blur\blur\BlurProcessorFactory$1.class
+com\methodia\academy\blur\blur\BoxBlurProcessor.class
+com\methodia\academy\blur\blur\GaussianBlurProcessor.class
+com\methodia\academy\blur\app\BlurApplicationService.class
+com\methodia\academy\blur\validation\BlurRequestValidator.class
+com\methodia\academy\blur\io\ImageWriterService.class
