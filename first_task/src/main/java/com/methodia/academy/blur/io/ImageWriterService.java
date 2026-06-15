@@ -9,7 +9,18 @@ public class ImageWriterService {
     public void write(BufferedImage image, String path) {
         try {
             String format = getFormat(path);
-            ImageIO.write(image, format, new File(path));
+            File outputFile = new File(path);
+            File parentDirectory = outputFile.getParentFile();
+
+            if (parentDirectory != null && !parentDirectory.exists() && !parentDirectory.mkdirs()) {
+                throw new IOException("Could not create output directory: " + parentDirectory);
+            }
+
+            boolean written = ImageIO.write(image, format, outputFile);
+
+            if (!written) {
+                throw new IllegalArgumentException("Unsupported output image format: " + format);
+            }
         } catch (IOException e) {
             throw new RuntimeException("Could not write image: " + path, e);
         }

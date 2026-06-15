@@ -1,17 +1,27 @@
-package com.methodia.academy.blur.blur;
+package com.methodia.academy.blur.filter;
 
 import java.awt.image.BufferedImage;
+import java.util.List;
 
-public class BoxBlurProcessor implements BlurProcessor {
+public class BoxBlurFilter extends BaseNeighborhoodFilter implements Filter {
 
     @Override
-    public BufferedImage process(BufferedImage image, int radius) {
-        int width = image.getWidth();
-        int height = image.getHeight();
-        BufferedImage result = new BufferedImage(width, height, image.getType());
+    public String name() {
+        return "boxblur";
+    }
 
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
+    @Override
+    public int parameterCount() {
+        return 1;
+    }
+
+    @Override
+    public BufferedImage apply(BufferedImage image, List<String> parameters) {
+        int radius = parseRadius(parameters);
+        BufferedImage result = createTargetImage(image);
+
+        for (int y = 0; y < image.getHeight(); y++) {
+            for (int x = 0; x < image.getWidth(); x++) {
                 result.setRGB(x, y, blurPixel(image, x, y, radius));
             }
         }
@@ -41,22 +51,15 @@ public class BoxBlurProcessor implements BlurProcessor {
             }
         }
 
-        int alpha = (int) (alphaSum / pixelCount);
-        int red = (int) (redSum / pixelCount);
-        int green = (int) (greenSum / pixelCount);
-        int blue = (int) (blueSum / pixelCount);
-
-        return composeArgb(alpha, red, green, blue);
+        return composeArgb(
+                (int) (alphaSum / pixelCount),
+                (int) (redSum / pixelCount),
+                (int) (greenSum / pixelCount),
+                (int) (blueSum / pixelCount)
+        );
     }
 
-    private int clamp(int value, int min, int max) {
-        return Math.max(min, Math.min(max, value));
-    }
-
-    private int composeArgb(int alpha, int red, int green, int blue) {
-        return (alpha << 24)
-                | (red << 16)
-                | (green << 8)
-                | blue;
+    private int parseRadius(List<String> parameters) {
+        return FilterParameterParser.parsePositiveInteger(parameters, 0, "radius");
     }
 }

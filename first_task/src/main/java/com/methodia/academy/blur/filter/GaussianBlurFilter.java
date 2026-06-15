@@ -1,15 +1,28 @@
-package com.methodia.academy.blur.blur;
+package com.methodia.academy.blur.filter;
 
 import java.awt.image.BufferedImage;
+import java.util.List;
 
-public class GaussianBlurProcessor implements BlurProcessor {
+public class GaussianBlurFilter extends BaseNeighborhoodFilter implements Filter {
+
     @Override
-    public BufferedImage process(BufferedImage image, int radius) {
+    public String name() {
+        return "gaussianblur";
+    }
+
+    @Override
+    public int parameterCount() {
+        return 1;
+    }
+
+    @Override
+    public BufferedImage apply(BufferedImage image, List<String> parameters) {
+        int radius = FilterParameterParser.parsePositiveInteger(parameters, 0, "radius");
         int[] kernel = createKernel(radius);
         int kernelWeight = sum(kernel);
 
-        BufferedImage horizontalPass = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
-        BufferedImage result = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
+        BufferedImage horizontalPass = createTargetImage(image);
+        BufferedImage result = createTargetImage(image);
 
         applyHorizontalPass(image, horizontalPass, kernel, radius, kernelWeight);
         applyVerticalPass(horizontalPass, result, kernel, radius, kernelWeight);
@@ -131,16 +144,5 @@ public class GaussianBlurProcessor implements BlurProcessor {
         }
 
         return total;
-    }
-
-    private int clamp(int value, int min, int max) {
-        return Math.max(min, Math.min(max, value));
-    }
-
-    private int composeArgb(int alpha, int red, int green, int blue) {
-        return (alpha << 24)
-                | (red << 16)
-                | (green << 8)
-                | blue;
     }
 }
